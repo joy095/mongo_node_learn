@@ -48,26 +48,26 @@ const createNewUser = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc Update a users
-// @route Patch /users
+// @desc Update a user
+// @route PATCH /users
 // @access Private
 const updateUser = asyncHandler(async (req, res) => {
   const { id, username, roles, active, password } = req.body;
 
-  // Confirm date
+  // Confirm data
   if (
     !id ||
     !username ||
     !Array.isArray(roles) ||
     !roles.length ||
-    !typeof active !== "boolean"
+    typeof active !== "boolean"
   ) {
     return res
       .status(400)
-      .json({ message: "All fields are except password required" });
+      .json({ message: "All fields except password are required" });
   }
 
-  // Does the user exist to upate?
+  // Does the user exist to update?
   const user = await User.findById(id).exec();
 
   if (!user) {
@@ -103,25 +103,26 @@ const deleteUser = asyncHandler(async (req, res) => {
   const { id } = req.body;
 
   if (!id) {
-    return res.status(400).json({ message: "Uder ID Required" });
+    return res.status(400).json({ message: "User ID Required" });
   }
 
-  const notes = await Note.findOne({ user: id }).lean().exec();
-  if (notes?.length) {
+  const note = await Note.findOne({ user: id }).lean().exec();
+  if (note) {
     return res.status(400).json({ message: "User has assigned notes" });
   }
 
+  // Does the user exist to delete?
   const user = await User.findById(id).exec();
 
   if (!user) {
     return res.status(400).json({ message: "User not found" });
-
-    const result = await user.deleteOne();
-
-    const reply = `Username ${result.username} with ID ${result._id} deleted`;
-
-    res.json(reply);
   }
+
+  const result = await user.deleteOne();
+
+  const reply = `Username ${result.username} with ID ${result._id} deleted`;
+
+  res.json(reply);
 });
 
 module.exports = {
