@@ -1,16 +1,17 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-const path = require("node:path");
+const path = require("path");
 const { logger } = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-const corsOption = require("./config/corsOption");
+const corsOptions = require("./config/corsOptions");
 const PORT = process.env.PORT || 3500;
 
 app.use(logger);
 
-app.use(cors(corsOption));
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -33,6 +34,4 @@ app.all("*", (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, (req, res) => {
-  console.log(`server is started at ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
